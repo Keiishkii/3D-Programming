@@ -1,0 +1,20 @@
+﻿  main.cpp
+C:\Users\Charl\Desktop\Git Repositories\3D-Programming\glsandbox\src\main.cpp(32,65): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\Charl\Desktop\Git Repositories\3D-Programming\glsandbox\src\main.cpp(51,32): warning C4305: 'argument': truncation from 'double' to '_Ty'
+          with
+          [
+              _Ty=GLfloat
+          ]
+C:\Users\Charl\Desktop\Git Repositories\3D-Programming\glsandbox\src\main.cpp(52,32): warning C4305: 'argument': truncation from 'double' to '_Ty'
+          with
+          [
+              _Ty=GLfloat
+          ]
+C:\Users\Charl\Desktop\Git Repositories\3D-Programming\glsandbox\src\main.cpp(53,32): warning C4305: 'argument': truncation from 'double' to '_Ty'
+          with
+          [
+              _Ty=GLfloat
+          ]
+C:\Users\Charl\Desktop\Git Repositories\3D-Programming\glsandbox\src\main.cpp(175,59): warning C4267: 'argument': conversion from 'size_t' to 'const int', possible loss of data
+C:\Users\Charl\Desktop\Git Repositories\3D-Programming\glsandbox\src\main.cpp(222,12): warning C4305: '+=': truncation from 'double' to 'float'
+  GLSandbox.vcxproj -> C:\Users\Charl\Desktop\Git Repositories\3D-Programming\glsandbox\x64\Debug\GLSandbox.exe
