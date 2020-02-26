@@ -5,8 +5,11 @@
 #include <iostream>
 #include <vector>
 
-#include "C:\Users\Charl\Desktop\Git Repositories\3D-Programming\glsandbox\Model.h"
-#include "C:\Users\Charl\Desktop\Git Repositories\3D-Programming\glsandbox\Shaders.h"
+#include <glm/glm.hpp>
+#include <glm/ext.hpp>
+
+#include "Model.h"
+#include "Shaders.h"
 
 void initialiseWindowAndOpenGL(SDL_Window** _window);
 void gameLoop(SDL_Window* window, const GLuint& programId, const GLuint& vaoId, int const _positionsListSize);
@@ -137,11 +140,13 @@ int main(int argc, char *argv[])
 
 	// Create new shader program and attach our shader objects
 	GLuint programId = glCreateProgram();
+
 	glAttachShader(programId, vertexShaderId);
 	glAttachShader(programId, fragmentShaderId);
 
 	// Ensure the VAO "position" attribute stream gets set as the first position
 	// during the link.
+
 	glBindAttribLocation(programId, 0, "in_Position");
 	glBindAttribLocation(programId, 1, "in_Colour");
 
@@ -163,15 +168,6 @@ int main(int argc, char *argv[])
 
 	/////// ------------------------------------------------------------------
 
-	//GLint colourUniformId = glGetUniformLocation(programId, "in_Colour");
-	
-	//if (colourUniformId == -1)
-	//{
-	//	throw std::exception();
-	//}
-
-	/////// ------------------------------------------------------------------
-
 	gameLoop(window, programId, vaoId, positionsVector.size());
 
 	SDL_DestroyWindow(window);
@@ -184,7 +180,17 @@ void gameLoop(SDL_Window* window, const GLuint& programId, const GLuint& vaoId, 
 {
 	bool quit = false;
 
-	float t = 0;
+	float xt = 0;
+	float yt = 0;
+	float zt = 0;
+
+	GLint modelLoc = glGetUniformLocation(programId, "in_Model");
+	GLint projectionLoc = glGetUniformLocation(programId, "in_Projection");
+
+	glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT, 0.1f, 100.f);
+
+	bool oneDown = false;
+	bool twoDown = false;
 
 	while (!quit)
 	{
@@ -192,26 +198,76 @@ void gameLoop(SDL_Window* window, const GLuint& programId, const GLuint& vaoId, 
 
 		while (SDL_PollEvent(&event))
 		{
-			if (event.type == SDL_QUIT)
+			switch (event.type)
 			{
+			case SDL_QUIT:
 				quit = true;
+				break;
+			case SDL_KEYDOWN:
+				switch (event.key.keysym.sym)
+				{
+				case SDLK_1:
+					oneDown = true;
+					break;
+				case SDLK_2:
+					twoDown = true;
+					break;
+				}
+				break;
+			case SDL_KEYUP:
+				switch (event.key.keysym.sym)
+				{
+				case SDLK_1:
+					oneDown = false;
+					break;
+				case SDLK_2:
+					twoDown = false;
+					break;
+				}
 			}
 		}
 
+		if (oneDown)
+		{
+			yt += 0.5;
+		}
+		if (twoDown)
+		{
+			zt += 0.5;
+		}
+
+		int width = 0;
+		int height = 0;
+		SDL_GetWindowSize(window, &width, &height);
+		glViewport(0, 0, width, height);
+
+		glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)width / (float)height, 0.1f, 100.f);
 		/////// ------------------------------------------------------------------
 
 		glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		/////// ------------------------------------------------------------------
 
 		// Instruct OpenGL to use our shader program and our VAO
 		glUseProgram(programId);
 		glBindVertexArray(vaoId);
-		//glUniform4f(colourUniformId, 0, (abs(sin(t))), 0, 1);
+
+		glm::mat4 model(1.0f);
+		model = glm::translate(model, glm::vec3(0, 0, -2.5f));
+		model = glm::rotate(model, glm::radians(xt), glm::vec3(1, 0, 0));
+		model = glm::rotate(model, glm::radians(yt), glm::vec3(0, 1, 0));
+		model = glm::rotate(model, glm::radians(zt), glm::vec3(0, 0, 1));
+
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+		glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
+
+		glEnable(GL_DEPTH_TEST);
 
 		// Draw 3 vertices (a triangle)
 		glDrawArrays(GL_TRIANGLES, 0, _positionsListSize / 3);
+
+		glDisable(GL_DEPTH_TEST);
 
 		// Reset the state
 		glBindVertexArray(0);
@@ -219,7 +275,7 @@ void gameLoop(SDL_Window* window, const GLuint& programId, const GLuint& vaoId, 
 
 		/////// ------------------------------------------------------------------
 
-		t += 0.01;
+		xt += 0.5;
 
 		SDL_GL_SwapWindow(window);
 	}

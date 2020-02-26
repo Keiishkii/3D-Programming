@@ -70,8 +70,8 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>C:\Users\Charl\Desktop\Git Repositories\3D-Programming\glsandbox-cmake\contrib\msvc15-windows-x86_64\include;C:\Users\Charl\Desktop\Git Repositories\3D-Programming\glsandbox\glm;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\Charl\Desktop\Git Repositories\3D-Programming\glsandbox-cmake\contrib\msvc15-windows-x86_64\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>H:\My Stuff\2nd Year\2nd Semester\3D-Programming\glsandbox-cmake\contrib\msvc15-windows-x86_64\include;H:\My Stuff\2nd Year\2nd Semester\3D-Programming\glsandbox\glm;$(IncludePath)</IncludePath>
+    <LibraryPath>H:\My Stuff\2nd Year\2nd Semester\3D-Programming\glsandbox-cmake\contrib\msvc15-windows-x86_64\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <IncludePath>H:\My Stuff\2nd Year\2nd Semester\3D Stuff\glsandbox-cmake\contrib\msvc15-windows-x86_64\include;$(IncludePath)</IncludePath>
@@ -142,14 +142,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Model.cpp" />
     <ClCompile Include="src\main.cpp" />
-    <ClCompile Include="Triangle.cpp" />
+    <ClCompile Include="src\Model.cpp" />
+    <ClCompile Include="src\Triangle.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Model.h" />
-    <ClInclude Include="Shaders.h" />
-    <ClInclude Include="Triangle.h" />
+    <ClInclude Include="src\Model.h" />
+    <ClInclude Include="src\Shaders.h" />
+    <ClInclude Include="src\Triangle.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

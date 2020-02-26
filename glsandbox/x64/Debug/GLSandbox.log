@@ -1,20 +1,19 @@
 ﻿  main.cpp
-C:\Users\Charl\Desktop\Git Repositories\3D-Programming\glsandbox\src\main.cpp(32,65): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\Charl\Desktop\Git Repositories\3D-Programming\glsandbox\src\main.cpp(51,32): warning C4305: 'argument': truncation from 'double' to '_Ty'
-          with
-          [
-              _Ty=GLfloat
-          ]
-C:\Users\Charl\Desktop\Git Repositories\3D-Programming\glsandbox\src\main.cpp(52,32): warning C4305: 'argument': truncation from 'double' to '_Ty'
-          with
-          [
-              _Ty=GLfloat
-          ]
-C:\Users\Charl\Desktop\Git Repositories\3D-Programming\glsandbox\src\main.cpp(53,32): warning C4305: 'argument': truncation from 'double' to '_Ty'
-          with
-          [
-              _Ty=GLfloat
-          ]
-C:\Users\Charl\Desktop\Git Repositories\3D-Programming\glsandbox\src\main.cpp(175,59): warning C4267: 'argument': conversion from 'size_t' to 'const int', possible loss of data
-C:\Users\Charl\Desktop\Git Repositories\3D-Programming\glsandbox\src\main.cpp(222,12): warning C4305: '+=': truncation from 'double' to 'float'
-  GLSandbox.vcxproj -> C:\Users\Charl\Desktop\Git Repositories\3D-Programming\glsandbox\x64\Debug\GLSandbox.exe
+H:\My Stuff\2nd Year\2nd Semester\3D-Programming\glsandbox\src\main.cpp(35,65): warning C4267:  'initializing': conversion from 'size_t' to 'int', possible loss of data
+H:\My Stuff\2nd Year\2nd Semester\3D-Programming\glsandbox\src\main.cpp(54,32): warning C4305:  'argument': truncation from 'double' to '_Ty'
+H:\My Stuff\2nd Year\2nd Semester\3D-Programming\glsandbox\src\main.cpp(54,32): warning C4305:         with
+H:\My Stuff\2nd Year\2nd Semester\3D-Programming\glsandbox\src\main.cpp(54,32): warning C4305:         [
+H:\My Stuff\2nd Year\2nd Semester\3D-Programming\glsandbox\src\main.cpp(54,32): warning C4305:             _Ty=GLfloat
+H:\My Stuff\2nd Year\2nd Semester\3D-Programming\glsandbox\src\main.cpp(54,32): warning C4305:         ]
+H:\My Stuff\2nd Year\2nd Semester\3D-Programming\glsandbox\src\main.cpp(55,32): warning C4305:  'argument': truncation from 'double' to '_Ty'
+H:\My Stuff\2nd Year\2nd Semester\3D-Programming\glsandbox\src\main.cpp(55,32): warning C4305:         with
+H:\My Stuff\2nd Year\2nd Semester\3D-Programming\glsandbox\src\main.cpp(55,32): warning C4305:         [
+H:\My Stuff\2nd Year\2nd Semester\3D-Programming\glsandbox\src\main.cpp(55,32): warning C4305:             _Ty=GLfloat
+H:\My Stuff\2nd Year\2nd Semester\3D-Programming\glsandbox\src\main.cpp(55,32): warning C4305:         ]
+H:\My Stuff\2nd Year\2nd Semester\3D-Programming\glsandbox\src\main.cpp(56,32): warning C4305:  'argument': truncation from 'double' to '_Ty'
+H:\My Stuff\2nd Year\2nd Semester\3D-Programming\glsandbox\src\main.cpp(56,32): warning C4305:         with
+H:\My Stuff\2nd Year\2nd Semester\3D-Programming\glsandbox\src\main.cpp(56,32): warning C4305:         [
+H:\My Stuff\2nd Year\2nd Semester\3D-Programming\glsandbox\src\main.cpp(56,32): warning C4305:             _Ty=GLfloat
+H:\My Stuff\2nd Year\2nd Semester\3D-Programming\glsandbox\src\main.cpp(56,32): warning C4305:         ]
+H:\My Stuff\2nd Year\2nd Semester\3D-Programming\glsandbox\src\main.cpp(171,59): warning C4267:  'argument': conversion from 'size_t' to 'const int', possible loss of data
+  GLSandbox.vcxproj -> H:\My Stuff\2nd Year\2nd Semester\3D-Programming\glsandbox\x64\Debug\GLSandbox.exe
