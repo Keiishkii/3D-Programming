@@ -1,3 +1,2 @@
-
-glsandbox/.vs/GLSandbox/v16/ipch/AutoPCH/86204479f841594c/MODEL.ipch
-glsandbox/.vs/GLSandbox/v16/ipch/AutoPCH/8b6c5f1622600848/MAIN.ipch
+**/*.ipch
+**/*.lib

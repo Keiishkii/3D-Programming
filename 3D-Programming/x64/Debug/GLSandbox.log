@@ -1,0 +1,42 @@
+﻿  main.cpp
+C:\Users\Charl\Desktop\Git Repositories\3D-Programming\3D-Programming\src\main.cpp(168,50): warning C4244: 'argument': conversion from 'T' to 'const _Ty', possible loss of data
+          with
+          [
+              T=fbxsdk::FbxDouble
+          ]
+          and
+          [
+              _Ty=GLfloat
+          ]
+C:\Users\Charl\Desktop\Git Repositories\3D-Programming\3D-Programming\src\main.cpp(169,50): warning C4244: 'argument': conversion from 'T' to 'const _Ty', possible loss of data
+          with
+          [
+              T=fbxsdk::FbxDouble
+          ]
+          and
+          [
+              _Ty=GLfloat
+          ]
+C:\Users\Charl\Desktop\Git Repositories\3D-Programming\3D-Programming\src\main.cpp(170,50): warning C4244: 'argument': conversion from 'T' to 'const _Ty', possible loss of data
+          with
+          [
+              T=fbxsdk::FbxDouble
+          ]
+          and
+          [
+              _Ty=GLfloat
+          ]
+C:\Users\Charl\Desktop\Git Repositories\3D-Programming\3D-Programming\src\main.cpp(461,27): warning C4305: 'initializing': truncation from 'double' to 'float'
+C:\Users\Charl\Desktop\Git Repositories\3D-Programming\3D-Programming\src\main.cpp(462,27): warning C4305: 'initializing': truncation from 'double' to 'float'
+C:\Users\Charl\Desktop\Git Repositories\3D-Programming\3D-Programming\src\main.cpp(466,66): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
+C:\Users\Charl\Desktop\Git Repositories\3D-Programming\3D-Programming\src\main.cpp(488,98): warning C4244: '+=': conversion from 'double' to 'T', possible loss of data
+          with
+          [
+              T=float
+          ]
+C:\Users\Charl\Desktop\Git Repositories\3D-Programming\3D-Programming\src\main.cpp(490,98): warning C4244: '+=': conversion from 'double' to 'T', possible loss of data
+          with
+          [
+              T=float
+          ]
+  GLSandbox.vcxproj -> C:\Users\Charl\Desktop\Git Repositories\3D-Programming\3D-Programming\x64\Debug\GLSandbox.exe

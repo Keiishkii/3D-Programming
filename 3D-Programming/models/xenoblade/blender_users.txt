@@ -1,0 +1,1 @@
+I suggest using the .fbx files for the main models as their .dae files have UV issues exclusive to Blender.
