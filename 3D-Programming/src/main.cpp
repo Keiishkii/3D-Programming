@@ -11,9 +11,13 @@
 #include <exception>
 #include <iostream>
 #include <vector>
+#include <memory>
 
 #include "Model.h"
 #include "Shaders.h"
+
+#include "VertexBuffer.h"
+
 #include "InputHandler.h"
 
 #define WINDOW_WIDTH 800	
@@ -34,20 +38,20 @@ bool initialiseSDKs(SDL_Window*& _window, FbxManager*& _manager, FbxScene*& _sce
 
 void startup(SDL_Window*& _window, FbxManager*& _manager, FbxScene*& _scene);
 void unpackModel(std::vector<GLfloat>& _positionsV, std::vector<GLfloat>& _textureCordV, Model& _object);
-void uploadToGraphicsCard(std::vector<GLfloat>& _positionsV, std::vector<GLfloat>& _textureCordV, GLuint& _vaoId);
+void uploadToGraphicsCard(std::vector<glm::vec3>& _positionsV, std::vector<GLfloat>& _textureCordV, GLuint& _vaoId);
 void gameLoop(SDL_Window* _window, const GLuint& _programId, const GLuint& _vaoId, const GLuint& textureId, int const _polygonCount);
 void FBX_DestroyManager(FbxManager*& _manager);
 
 void translateViewingMatrix(glm::mat4& veiwing, Transform& _transform);
 
-void operateOnNode(FbxNode* _node, std::vector<GLfloat>& _positionsV, std::vector<GLfloat>& _textureCoordV, int& _vertexCount);
+void operateOnNode(FbxNode* _node, std::vector<glm::vec3>& _positionsV, std::vector<GLfloat>& _textureCoordV, int& _vertexCount);
 
 ////
 
 bool LoadScene(FbxManager* pManager, FbxDocument* pScene, const char* pFilename);
 
 //
-
+std::shared_ptr<VertexBuffer> vb;
 
 int main(int argc, char *argv[])
 {
@@ -135,7 +139,7 @@ bool initialiseSDKs(SDL_Window*& _window, FbxManager*& _manager, FbxScene*& _sce
 	return programSuccess;
 }
 
-void operateOnNode(FbxNode* _node, std::vector<GLfloat>& _positionsV, std::vector<GLfloat>& _textureCoordV, int& _vertexCount)
+void operateOnNode(FbxNode* _node, std::vector < glm::vec3 > & _positionsV, std::vector<GLfloat>& _textureCoordV, int& _vertexCount)
 {
 	std::cout << "Node name: " << (*_node).GetName() << std::endl;
 
@@ -165,9 +169,7 @@ void operateOnNode(FbxNode* _node, std::vector<GLfloat>& _positionsV, std::vecto
 						{
 							_vertexCount++;
 							FbxVector4 controlPoint = mesh->GetControlPointAt(vertciesArray[v + (p * mesh->GetPolygonSize(p))]);
-							_positionsV.push_back(controlPoint.mData[0]);
-							_positionsV.push_back(controlPoint.mData[1]);
-							_positionsV.push_back(controlPoint.mData[2]);
+							_positionsV.push_back(glm::vec3(controlPoint.mData[0], controlPoint.mData[1], controlPoint.mData[2]));
 						}
 					}
 
@@ -201,7 +203,7 @@ void startup(SDL_Window*& _window, FbxManager*& _manager, FbxScene*& _scene)
 	int polygonCount = 0;
 	int vertexCount = 0;
 
-	std::vector<GLfloat> positionsVector;
+	std::vector<glm::vec3> positionsVector;
 	std::vector<GLfloat> textureCoordsVector;
 
 	if (sceneSuccsess)
@@ -335,34 +337,35 @@ void unpackModel(std::vector<GLfloat>& _positionsV, std::vector<GLfloat>& _textu
 
 }
 
-void uploadToGraphicsCard(std::vector<GLfloat>& _positionsV, std::vector<GLfloat>& _textureCordV, GLuint& _vaoId)
+void uploadToGraphicsCard(std::vector<glm::vec3>& _positionsV, std::vector<GLfloat>& _textureCordV, GLuint& _vaoId)
 {
 	/////// ------------------------------------------------------------------			-- Apply Positions and Colours to VBO
 	GLuint positionsVboId = 0;
-	GLuint textureVboId = 0;
+	//GLuint textureVboId = 0;
 
-	glGenBuffers(1, &positionsVboId);
-	glGenBuffers(1, &textureVboId);
+	vb = std::make_shared<VertexBuffer>();
+
+	for (int i = 0; i < _positionsV.size(); i++)
+	{
+		vb->add(_positionsV.at(i));
+	}
+
+	//glGenBuffers(1, &textureVboId);
 
 	if (!positionsVboId)
 	{
 		throw std::exception();
 	}
 
-	if (!textureVboId)
-	{
-		throw std::exception();
-	}
-
-	glBindBuffer(GL_ARRAY_BUFFER, positionsVboId);
-	glBufferData(GL_ARRAY_BUFFER, _positionsV.size() * sizeof(_positionsV.at(0)), &_positionsV.at(0), GL_STATIC_DRAW);
+	//if (!textureVboId)
+	//{
+	//	throw std::exception();
+	//}
 
 	//glBindBuffer(GL_ARRAY_BUFFER, textureVboId);
 	//glBufferData(GL_ARRAY_BUFFER, _textureCordV.size() * sizeof(_textureCordV.at(0)), &_textureCordV.at(0), GL_STATIC_DRAW);
 
 	// Reset Bind
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-
 	/////// ------------------------------------------------------------------			 -- Apply VBO to VAO
 
 	glGenVertexArrays(1, &_vaoId);
@@ -374,7 +377,7 @@ void uploadToGraphicsCard(std::vector<GLfloat>& _positionsV, std::vector<GLfloat
 
 	glBindVertexArray(_vaoId);
 
-	glBindBuffer(GL_ARRAY_BUFFER, positionsVboId);
+	glBindBuffer(GL_ARRAY_BUFFER, vb->getID());
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (void*)0);
 	glEnableVertexAttribArray(0);
 
