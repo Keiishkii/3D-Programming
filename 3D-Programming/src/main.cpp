@@ -29,6 +29,10 @@
 struct Transform
 {
 	glm::mat4 currentTransform = glm::mat4(1);
+
+	glm::vec3 currentOrientation{ 0 };
+	glm::vec3 currentPosition{ 0 };
+
 	glm::vec3 delta_XYZ{ 0 };
 	glm::vec3 delta_R_XYZ{ 0 };
 	float translateMultiplier = 1;
@@ -196,7 +200,7 @@ void startup(SDL_Window*& _window, FbxManager*& _manager, FbxScene*& _scene)
 	
 	std::string path = "models/xenoblade/shulk.fbx";
 
-	FbxString localFilePath("models/BlockKitty.fbx");
+	FbxString localFilePath(path.c_str());
 
 	sceneSuccsess = LoadScene(_manager, _scene, localFilePath.Buffer());
 	
@@ -352,11 +356,6 @@ void uploadToGraphicsCard(std::vector<glm::vec3>& _positionsV, std::vector<GLflo
 
 	//glGenBuffers(1, &textureVboId);
 
-	if (!positionsVboId)
-	{
-		throw std::exception();
-	}
-
 	//if (!textureVboId)
 	//{
 	//	throw std::exception();
@@ -394,11 +393,11 @@ void gameLoop(SDL_Window* window, const GLuint& programId, const GLuint& vaoId, 
 {
 	GLint modelLoc = glGetUniformLocation(programId, "in_Model");
 	GLint projectionLoc = glGetUniformLocation(programId, "in_Projection");
-	GLint invPerspectiveLoc = glGetUniformLocation(programId, "in_InverseVeiwing");
+	GLint invVeiwingLoc = glGetUniformLocation(programId, "in_InverseVeiwing");
 
 	//GLint textureLoc = glGetUniformLocation(programId, "in_Texture");
 	glm::mat4 model(1.0f);
-	glm::mat4 veiwing = glm::inverse(glm::mat4(1));
+	glm::mat4 veiwing = glm::mat4(1);
 	glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT, 0.1f, 100.f);
 
 	Transform transform;
@@ -432,7 +431,7 @@ void gameLoop(SDL_Window* window, const GLuint& programId, const GLuint& vaoId, 
 
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 		glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
-		glUniformMatrix4fv(invPerspectiveLoc, 1, GL_FALSE, glm::value_ptr(veiwing));
+		glUniformMatrix4fv(invVeiwingLoc, 1, GL_FALSE, glm::value_ptr(veiwing));
 
 
 		// Draw 3 vertices (a triangle)
@@ -471,49 +470,44 @@ void translateViewingMatrix(glm::mat4& veiwing, Transform& _transform)
 
 		// Up and Down
 	if ((*input).key_A)
-		_transform.delta_XYZ.x -= movementSpeed * _transform.translateMultiplier;
+		_transform.delta_XYZ.x += 1;
 	if ((*input).key_D)
-		_transform.delta_XYZ.x += movementSpeed * _transform.translateMultiplier;
+		_transform.delta_XYZ.x -= 1;
 
 		// Left and Right
 	if ((*input).key_LSHIFT)
-		_transform.delta_XYZ.y -= movementSpeed * _transform.translateMultiplier;
+		_transform.delta_XYZ.y += 1;
 	if ((*input).key_SPACE)
-		_transform.delta_XYZ.y += movementSpeed * _transform.translateMultiplier;
+		_transform.delta_XYZ.y -= 1;
 
 		// Forwards and Back
 	if ((*input).key_W)
-		_transform.delta_XYZ.z -= movementSpeed * _transform.translateMultiplier;
+		_transform.delta_XYZ.z += 1;
 	if ((*input).key_S)
-		_transform.delta_XYZ.z += movementSpeed * _transform.translateMultiplier;
+		_transform.delta_XYZ.z -= 1;
 
 	// Roll
-	_transform.delta_R_XYZ.x += -(0.3 * pow(abs((*input).yrel), 1.5) * copysign(1.0, (*input).yrel));// *((float)(*input).yrel / abs((float)(*input).yrel)));
+	_transform.delta_R_XYZ.x += -(0.1 * pow(abs((*input).yrel), 1.5) * copysign(1.0, (*input).yrel));// *((float)(*input).yrel / abs((float)(*input).yrel)));
 	// Pitch
-	_transform.delta_R_XYZ.y += -(0.3 * pow(abs((*input).xrel), 1.5) * copysign(1.0, (*input).xrel));// *((float)(*input).xrel / abs((float)(*input).xrel)));
-	// Yaw
-	if ((*input).key_E)
-		_transform.delta_R_XYZ.z -= rotationSpeed;
-	if ((*input).key_Q)
-		_transform.delta_R_XYZ.z += rotationSpeed;
-
-	//transorm.... currentPos --> rotate --> move
+	_transform.delta_R_XYZ.y += -(0.1 * pow(abs((*input).xrel), 1.5) * copysign(1.0, (*input).xrel));// *((float)(*input).xrel / abs((float)(*input).xrel)));
 
 	glm::mat4 deltaOffset = glm::mat4(1);
 	deltaOffset = glm::translate(deltaOffset, glm::vec3(_transform.delta_XYZ.x, _transform.delta_XYZ.y, _transform.delta_XYZ.z));
 
-	glm::mat4 deltaRotatation = glm::mat4(1);
-	deltaRotatation = glm::rotate(deltaRotatation, glm::radians(_transform.delta_R_XYZ.x), glm::vec3(1, 0, 0));
-	deltaRotatation = glm::rotate(deltaRotatation, glm::radians(_transform.delta_R_XYZ.y), glm::vec3(0, 1, 0));
-	deltaRotatation = glm::rotate(deltaRotatation, glm::radians(_transform.delta_R_XYZ.z), glm::vec3(0, 0, 1));
+	glm::mat4 temp(1.0f);
+	temp = glm::rotate(temp, _transform.currentOrientation.y, glm::vec3(0, 1, 0));
+	temp = glm::rotate(temp, _transform.currentOrientation.x, glm::vec3(1, 0, 0));
+	temp = glm::translate(temp, glm::vec3(_transform.delta_XYZ.x, _transform.delta_XYZ.y, _transform.delta_XYZ.z));
+
+	_transform.currentPosition += glm::vec3(temp * glm::vec4(0,0,0,1)) *- 0.01f;
+	_transform.currentOrientation.x += _transform.delta_R_XYZ.x * 0.01f;
+	_transform.currentOrientation.y += _transform.delta_R_XYZ.y * 0.01f;
 
 	veiwing = glm::mat4(1);
-	veiwing = _transform.currentTransform * deltaRotatation * deltaOffset;
-
+	veiwing = glm::translate(veiwing, _transform.currentPosition);
+	veiwing = glm::rotate(veiwing, _transform.currentOrientation.y, glm::vec3(0, 1, 0));
+	veiwing = glm::rotate(veiwing, _transform.currentOrientation.x, glm::vec3(1, 0, 0));
 	
-	//veiwing = glm::translate(veiwing, glm::vec3(_transform.delta_XYZ.x, _transform.delta_XYZ.y, _transform.delta_XYZ.z));
-
-	_transform.currentTransform = veiwing;
 	veiwing = glm::inverse(veiwing);
 }
 
