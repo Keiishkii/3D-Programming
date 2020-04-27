@@ -13,10 +13,11 @@
 #include <vector>
 #include <memory>
 
-#include "Model.h"
 #include "Shaders.h"
 
 #include "VertexBuffer.h"
+#include "VertexArray.h"
+#include "AnimatedModel.h"
 
 #include "InputHandler.h"
 
@@ -25,6 +26,9 @@
 
 #undef  IOS_REF
 #define IOS_REF (*(pManager->GetIOSettings()))
+
+std::shared_ptr<AnimatedModel> animatedModel;
+//std::shared_ptr<VertexArray> vao;
 
 struct Transform
 {
@@ -41,21 +45,10 @@ struct Transform
 bool initialiseSDKs(SDL_Window*& _window, FbxManager*& _manager, FbxScene*& _scene);
 
 void startup(SDL_Window*& _window, FbxManager*& _manager, FbxScene*& _scene);
-void unpackModel(std::vector<GLfloat>& _positionsV, std::vector<GLfloat>& _textureCordV, Model& _object);
-void uploadToGraphicsCard(std::vector<glm::vec3>& _positionsV, std::vector<GLfloat>& _textureCordV, GLuint& _vaoId);
-void gameLoop(SDL_Window* _window, const GLuint& _programId, const GLuint& _vaoId, const GLuint& textureId, int const _polygonCount);
+void gameLoop(SDL_Window* _window, const GLuint& _programID);
 void FBX_DestroyManager(FbxManager*& _manager);
 
 void translateViewingMatrix(glm::mat4& veiwing, Transform& _transform);
-
-void operateOnNode(FbxNode* _node, std::vector<glm::vec3>& _positionsV, std::vector<GLfloat>& _textureCoordV, int& _vertexCount);
-
-////
-
-bool LoadScene(FbxManager* pManager, FbxDocument* pScene, const char* pFilename);
-
-//
-std::shared_ptr<VertexBuffer> vb;
 
 int main(int argc, char *argv[])
 {
@@ -143,126 +136,15 @@ bool initialiseSDKs(SDL_Window*& _window, FbxManager*& _manager, FbxScene*& _sce
 	return programSuccess;
 }
 
-void operateOnNode(FbxNode* _node, std::vector < glm::vec3 > & _positionsV, std::vector<GLfloat>& _textureCoordV, int& _vertexCount)
-{
-	std::cout << "Node name: " << (*_node).GetName() << std::endl;
-
-	if (!((*_node).GetNodeAttribute() == NULL))
-	{
-		int attributeCount = (*_node).GetNodeAttributeCount();
-		for (int i = 0; i < attributeCount; i++)
-		{
-			FbxNodeAttribute::EType lAttributeType;
-			lAttributeType = ((*_node).GetNodeAttributeByIndex(i)->GetAttributeType());
-
-			switch (lAttributeType)
-			{
-				case FbxNodeAttribute::eMesh:
-				{
-					FbxMesh* mesh = (*_node).GetMesh();
-					
-					int currentPolygonCount = mesh->GetPolygonCount();
-					std::cout << "Polygon count of mesh: " << currentPolygonCount << std::endl;
-
-					int g = 0;
-					for (int p = 0; p < currentPolygonCount; p++)
-					{
-						int* vertciesArray = mesh->GetPolygonVertices();
-					//	mesh->texture
-						for (int v = 0; v < mesh->GetPolygonSize(p); v++)
-						{
-							_vertexCount++;
-							FbxVector4 controlPoint = mesh->GetControlPointAt(vertciesArray[v + (p * mesh->GetPolygonSize(p))]);
-							_positionsV.push_back(glm::vec3(controlPoint.mData[0], controlPoint.mData[1], controlPoint.mData[2]));
-						}
-					}
-
-					break;
-				}
-			}
-		}
-	}
-
-	int children = (*_node).GetChildCount();
-
-	if (children > 0)
-	{
-		for (int i = 0; i < children; i++)
-		{
-			operateOnNode(((*_node).GetChild(i)), _positionsV, _textureCoordV, _vertexCount);
-		}
-	}
-}
-
 void startup(SDL_Window*& _window, FbxManager*& _manager, FbxScene*& _scene)
 {
-	bool sceneSuccsess = true;
-	
 	std::string path = "models/xenoblade/shulk.fbx";
 
-	FbxString localFilePath(path.c_str());
-
-	sceneSuccsess = LoadScene(_manager, _scene, localFilePath.Buffer());
+	bool modelLoaded = true;
+	animatedModel = std::make_shared<AnimatedModel>(path, _manager, _scene, modelLoaded);
 	
-	int polygonCount = 0;
-	int vertexCount = 0;
-
-	std::vector<glm::vec3> positionsVector;
-	std::vector<GLfloat> textureCoordsVector;
-
-	if (sceneSuccsess)
+	if (modelLoaded)
 	{
-		FbxNode* routeNode = _scene->GetRootNode();
-
-		if (routeNode)
-		{
-			operateOnNode(routeNode, positionsVector, textureCoordsVector, vertexCount);
-			std::cout << "Polygon count: " << polygonCount << std::endl;
-			std::cout << "Vertex varaible value count: " << positionsVector.size() << std::endl;
-		}
-
-		//int w = 0;
-		//int h = 0;
-		//unsigned char* texture = stbi_load("models/Monado Texture.png", &w, &h, NULL, 4);
-		//Model objectToRender("models/Monado.obj", glm::vec4(0, -2.5, -20, 1));
-
-		//if (!texture)
-		//{
-		//	throw std::exception();
-		//}
-
-		////
-
-		// Create and bind a texture.
-		GLuint textureID = 0;
-		//glGenTextures(1, &textureID);
-
-		//if (!textureID)
-		//{
-		//	throw std::exception();
-		//}
-
-		//glBindTexture(GL_TEXTURE_2D, textureID);
-
-		// Upload the image data to the bound texture unit in the GPU
-		//glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA,
-		//	GL_UNSIGNED_BYTE, texture);
-
-		// Free the loaded data because we now have a copy on the GPU
-		//free(texture);
-
-		// Generate Mipmap so the texture can be mapped correctly
-		//glGenerateMipmap(GL_TEXTURE_2D);
-
-		// Unbind the texture because we are done operating on it
-		//glBindTexture(GL_TEXTURE_2D, 0);
-		
-					//unpackModel(positionsVector, textureCoordsVector, objectToRender);
-
-		// Generate the VAO and upload it to the graphics card
-		GLuint vaoId = 0;
-		uploadToGraphicsCard(positionsVector, textureCoordsVector, vaoId);
-
 		// Compile the vertex shader
 		GLuint vertexShaderID = 0;
 		Shaders::Shaders::generateVertexShader(vertexShaderID);
@@ -277,10 +159,8 @@ void startup(SDL_Window*& _window, FbxManager*& _manager, FbxScene*& _scene)
 		glAttachShader(programId, vertexShaderID);
 		glAttachShader(programId, fragmentShaderID);
 
-
 		glBindAttribLocation(programId, 0, "in_Position");
 		glBindAttribLocation(programId, 1, "in_TextureCoord");
-
 
 		// Perform the link and check for failure
 		GLint success = 0;
@@ -301,7 +181,7 @@ void startup(SDL_Window*& _window, FbxManager*& _manager, FbxScene*& _scene)
 
 		/////// ------------------------------------------------------------------
 
-		gameLoop(_window, programId, vaoId, textureID, vertexCount);
+		gameLoop(_window, programId);
 	}
 	else
 	{
@@ -309,87 +189,7 @@ void startup(SDL_Window*& _window, FbxManager*& _manager, FbxScene*& _scene)
 	}
 }
 
-void unpackModel(std::vector<GLfloat>& _positionsV, std::vector<GLfloat>& _textureCordV, Model& _object)
-{
-	for (int i = 0; i < (*_object.getTrigList()).size(); i++)
-	{
-		_positionsV.push_back((*_object.getTrigList()).at(i).getVertex1().x);
-		_positionsV.push_back((*_object.getTrigList()).at(i).getVertex1().y);
-		_positionsV.push_back((*_object.getTrigList()).at(i).getVertex1().z);
-
-		_positionsV.push_back((*_object.getTrigList()).at(i).getVertex2().x);
-		_positionsV.push_back((*_object.getTrigList()).at(i).getVertex2().y);
-		_positionsV.push_back((*_object.getTrigList()).at(i).getVertex2().z);
-
-		_positionsV.push_back((*_object.getTrigList()).at(i).getVertex3().x);
-		_positionsV.push_back((*_object.getTrigList()).at(i).getVertex3().y);
-		_positionsV.push_back((*_object.getTrigList()).at(i).getVertex3().z);
-
-		_textureCordV.push_back((*_object.getTrigList()).at(i).getTextCoord1().x);
-		_textureCordV.push_back((*_object.getTrigList()).at(i).getTextCoord1().y);
-
-		_textureCordV.push_back((*_object.getTrigList()).at(i).getTextCoord2().x);
-		_textureCordV.push_back((*_object.getTrigList()).at(i).getTextCoord2().y);
-
-		_textureCordV.push_back((*_object.getTrigList()).at(i).getTextCoord3().x);
-		_textureCordV.push_back((*_object.getTrigList()).at(i).getTextCoord3().y);
-
-	}
-
-	std::cout << "Colour Size -> " << _textureCordV.size() << std::endl;
-	std::cout << "Position Size -> " << _positionsV.size() << std::endl;
-
-}
-
-void uploadToGraphicsCard(std::vector<glm::vec3>& _positionsV, std::vector<GLfloat>& _textureCordV, GLuint& _vaoId)
-{
-	/////// ------------------------------------------------------------------			-- Apply Positions and Colours to VBO
-	GLuint positionsVboId = 0;
-	//GLuint textureVboId = 0;
-
-	vb = std::make_shared<VertexBuffer>();
-
-	for (int i = 0; i < _positionsV.size(); i++)
-	{
-		vb->add(_positionsV.at(i));
-	}
-
-	//glGenBuffers(1, &textureVboId);
-
-	//if (!textureVboId)
-	//{
-	//	throw std::exception();
-	//}
-
-	//glBindBuffer(GL_ARRAY_BUFFER, textureVboId);
-	//glBufferData(GL_ARRAY_BUFFER, _textureCordV.size() * sizeof(_textureCordV.at(0)), &_textureCordV.at(0), GL_STATIC_DRAW);
-
-	// Reset Bind
-	/////// ------------------------------------------------------------------			 -- Apply VBO to VAO
-
-	glGenVertexArrays(1, &_vaoId);
-
-	if (!_vaoId)
-	{
-		throw std::exception();
-	}
-
-	glBindVertexArray(_vaoId);
-
-	glBindBuffer(GL_ARRAY_BUFFER, vb->getID());
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (void*)0);
-	glEnableVertexAttribArray(0);
-
-	//glBindBuffer(GL_ARRAY_BUFFER, textureVboId);
-	//glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), (void*)0);
-	//glEnableVertexAttribArray(1);
-
-	// Reset the state
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindVertexArray(0);
-}
-
-void gameLoop(SDL_Window* window, const GLuint& programId, const GLuint& vaoId, const GLuint& textureId, int const _vertexCount)
+void gameLoop(SDL_Window* window, const GLuint& programId)
 {
 	GLint modelLoc = glGetUniformLocation(programId, "in_Model");
 	GLint projectionLoc = glGetUniformLocation(programId, "in_Projection");
@@ -425,19 +225,17 @@ void gameLoop(SDL_Window* window, const GLuint& programId, const GLuint& vaoId, 
 		// Drawing operation
 		// Instruct OpenGL to use our shader program and our VAO
 		glUseProgram(programId);
-		glBindVertexArray(vaoId);
+		glBindVertexArray(animatedModel->getVertexArrayObject()->getID());
 		//glBindTexture(GL_TEXTURE_2D, textureId);
-
 
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 		glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
 		glUniformMatrix4fv(invVeiwingLoc, 1, GL_FALSE, glm::value_ptr(veiwing));
 
-
-		// Draw 3 vertices (a triangle)
+		// Draw to the screen
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		glDrawArrays(GL_TRIANGLES, 0, _vertexCount);
+		glDrawArrays(GL_TRIANGLES, 0, animatedModel->getVertexArrayObject()->getVertexCount());
 
 		glDisable(GL_DEPTH_TEST);
 		glDisable(GL_CULL_FACE);
@@ -517,116 +315,4 @@ void FBX_DestroyManager(FbxManager*& _manager)
 	{
 		_manager->Destroy();
 	}
-}
-
-bool LoadScene(FbxManager* pManager, FbxDocument* pScene, const char* pFilename)
-{
-	int lFileMajor, lFileMinor, lFileRevision;
-	int lSDKMajor, lSDKMinor, lSDKRevision;
-	//int lFileFormat = -1;
-	int i, lAnimStackCount;
-	bool lStatus;
-	char lPassword[1024];
-
-	// Get the file version number generate by the FBX SDK.
-	FbxManager::GetFileFormatVersion(lSDKMajor, lSDKMinor, lSDKRevision);
-
-	// Create an importer.
-	FbxImporter* lImporter = FbxImporter::Create(pManager, "");
-
-	// Initialize the importer by providing a filename.
-	const bool lImportStatus = lImporter->Initialize(pFilename, -1, pManager->GetIOSettings());
-	lImporter->GetFileVersion(lFileMajor, lFileMinor, lFileRevision);
-
-	if (!lImportStatus)
-	{
-		FbxString error = lImporter->GetStatus().GetErrorString();
-		FBXSDK_printf("Call to FbxImporter::Initialize() failed.\n");
-		FBXSDK_printf("Error returned: %s\n\n", error.Buffer());
-
-		if (lImporter->GetStatus().GetCode() == FbxStatus::eInvalidFileVersion)
-		{
-			FBXSDK_printf("FBX file format version for this FBX SDK is %d.%d.%d\n", lSDKMajor, lSDKMinor, lSDKRevision);
-			FBXSDK_printf("FBX file format version for file '%s' is %d.%d.%d\n\n", pFilename, lFileMajor, lFileMinor, lFileRevision);
-		}
-
-		return false;
-	}
-
-	FBXSDK_printf("FBX file format version for this FBX SDK is %d.%d.%d\n", lSDKMajor, lSDKMinor, lSDKRevision);
-
-	if (lImporter->IsFBX())
-	{
-		FBXSDK_printf("FBX file format version for file '%s' is %d.%d.%d\n\n", pFilename, lFileMajor, lFileMinor, lFileRevision);
-
-		// From this point, it is possible to access animation stack information without
-		// the expense of loading the entire file.
-
-		FBXSDK_printf("Animation Stack Information\n");
-
-		lAnimStackCount = lImporter->GetAnimStackCount();
-
-		FBXSDK_printf("    Number of Animation Stacks: %d\n", lAnimStackCount);
-		FBXSDK_printf("    Current Animation Stack: \"%s\"\n", lImporter->GetActiveAnimStackName().Buffer());
-		FBXSDK_printf("\n");
-
-		for (i = 0; i < lAnimStackCount; i++)
-		{
-			FbxTakeInfo* lTakeInfo = lImporter->GetTakeInfo(i);
-
-			FBXSDK_printf("    Animation Stack %d\n", i);
-			FBXSDK_printf("         Name: \"%s\"\n", lTakeInfo->mName.Buffer());
-			FBXSDK_printf("         Description: \"%s\"\n", lTakeInfo->mDescription.Buffer());
-
-			// Change the value of the import name if the animation stack should be imported 
-			// under a different name.
-			FBXSDK_printf("         Import Name: \"%s\"\n", lTakeInfo->mImportName.Buffer());
-
-			// Set the value of the import state to false if the animation stack should be not
-			// be imported. 
-			FBXSDK_printf("         Import State: %s\n", lTakeInfo->mSelect ? "true" : "false");
-			FBXSDK_printf("\n");
-		}
-
-		// Set the import states. By default, the import states are always set to 
-		// true. The code below shows how to change these states.
-		IOS_REF.SetBoolProp(IMP_FBX_MATERIAL, true);
-		IOS_REF.SetBoolProp(IMP_FBX_TEXTURE, true);
-		IOS_REF.SetBoolProp(IMP_FBX_LINK, true);
-		IOS_REF.SetBoolProp(IMP_FBX_SHAPE, true);
-		IOS_REF.SetBoolProp(IMP_FBX_GOBO, true);
-		IOS_REF.SetBoolProp(IMP_FBX_ANIMATION, true);
-		IOS_REF.SetBoolProp(IMP_FBX_GLOBAL_SETTINGS, true);
-	}
-
-	// Import the scene.
-	lStatus = lImporter->Import(pScene);
-
-	if (lStatus == false && lImporter->GetStatus().GetCode() == FbxStatus::ePasswordError)
-	{
-		FBXSDK_printf("Please enter password: ");
-
-		lPassword[0] = '\0';
-
-		FBXSDK_CRT_SECURE_NO_WARNING_BEGIN
-			scanf("%s", lPassword);
-		FBXSDK_CRT_SECURE_NO_WARNING_END
-
-			FbxString lString(lPassword);
-
-		IOS_REF.SetStringProp(IMP_FBX_PASSWORD, lString);
-		IOS_REF.SetBoolProp(IMP_FBX_PASSWORD_ENABLE, true);
-
-		lStatus = lImporter->Import(pScene);
-
-		if (lStatus == false && lImporter->GetStatus().GetCode() == FbxStatus::ePasswordError)
-		{
-			FBXSDK_printf("\nPassword is wrong, import aborted.\n");
-		}
-	}
-
-	// Destroy the importer.
-	lImporter->Destroy();
-
-	return lStatus;
 }

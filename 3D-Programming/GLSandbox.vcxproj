@@ -148,19 +148,21 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\AnimatedModel.cpp" />
     <ClCompile Include="src\InputHandler.cpp" />
+    <ClCompile Include="src\Joint.cpp" />
     <ClCompile Include="src\main.cpp" />
-    <ClCompile Include="src\Model.cpp" />
     <ClCompile Include="src\Shaders.cpp" />
-    <ClCompile Include="src\Triangle.cpp" />
+    <ClCompile Include="src\VertexArray.cpp" />
     <ClCompile Include="src\VertexBuffer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\AnimatedModel.h" />
     <ClInclude Include="src\InputHandler.h" />
-    <ClInclude Include="src\Model.h" />
+    <ClInclude Include="src\Joint.h" />
     <ClInclude Include="src\Shaders.h" />
     <ClInclude Include="src\stb_image.h" />
-    <ClInclude Include="src\Triangle.h" />
+    <ClInclude Include="src\VertexArray.h" />
     <ClInclude Include="src\VertexBuffer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
