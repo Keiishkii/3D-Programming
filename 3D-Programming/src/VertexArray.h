@@ -19,17 +19,23 @@ private:
 	GLuint id = 0;
 	int vertexCount = 0;
 
-	VertexBuffer* vertexPositions = nullptr;
-
-	std::map<std::string, VertexBuffer *> vertexBuffers;
+	std::shared_ptr<VertexBuffer> vertexPositions;
+	std::shared_ptr<VertexBuffer> textureUVs;
+	std::shared_ptr<VertexBuffer> vertexNormals;
+	std::shared_ptr<VertexBuffer> vertexTangents;
+	std::shared_ptr<VertexBuffer> vertexBitangents;
 
 	bool dirty = false;
 public:
 	VertexArray();
-	void setVertexCount(int _vertexCount);
-	void setBuffer(std::string _buffer, VertexBuffer * _content);
-	int getVertexCount() { return vertexCount; }
+
 	GLuint getID();
+	int getVertexCount() { return vertexCount; }
+	std::shared_ptr<VertexBuffer> getVertexList() { return vertexPositions; }
+	std::shared_ptr<VertexBuffer> getTextureUVList() { return textureUVs; }
+
+	void setVertexCount(int _vertexCount);
+	void setBuffer(std::string _buffer, std::shared_ptr<VertexBuffer> _content);
 };
 
 #endif

@@ -1,0 +1,2 @@
+C:\Users\Charl\Desktop\Git Repositories\3D-Programming\3D-Programming\x64\Debug\GLSandbox.exe
+C:\Users\Charl\Desktop\Git Repositories\3D-Programming\3D-Programming\x64\Debug\GLSandbox.pdb

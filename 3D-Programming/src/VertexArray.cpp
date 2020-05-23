@@ -27,9 +27,24 @@ GLuint VertexArray::getID()
 		glEnableVertexAttribArray(0);
 
 			//TexturesPositions
-		//glBindBuffer(GL_ARRAY_BUFFER, textureVboId);
-		//glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), (void*)0);
-		//glEnableVertexAttribArray(1);
+		glBindBuffer(GL_ARRAY_BUFFER, textureUVs->getID());
+		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), (void*)0);
+		glEnableVertexAttribArray(1);
+
+			//Normals
+		glBindBuffer(GL_ARRAY_BUFFER, vertexNormals->getID());
+		glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (void*)0);
+		glEnableVertexAttribArray(2);
+
+			//Tangents
+		glBindBuffer(GL_ARRAY_BUFFER, vertexTangents->getID());
+		glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (void*)0);
+		glEnableVertexAttribArray(3);
+
+			//Bitangents
+		glBindBuffer(GL_ARRAY_BUFFER, vertexBitangents->getID());
+		glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (void*)0);
+		glEnableVertexAttribArray(3);
 
 		// Reset the state
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -41,11 +56,27 @@ GLuint VertexArray::getID()
 	return id;
 }
 
-void VertexArray::setBuffer(std::string _buffer, VertexBuffer* _content)
+void VertexArray::setBuffer(std::string _buffer, std::shared_ptr<VertexBuffer> _content)
 {
 	if (_buffer._Equal("VertexPositions"))
 	{
 		vertexPositions = _content;
+	}
+	else if (_buffer._Equal("TextureUVs"))
+	{
+		textureUVs = _content;
+	}
+	else if (_buffer._Equal("VertexNormals"))
+	{
+		vertexNormals = _content;
+	}
+	else if (_buffer._Equal("VertexTangents"))
+	{
+		vertexTangents = _content;
+	}
+	else if (_buffer._Equal("VertexBitangents"))
+	{
+		vertexBitangents = _content;
 	}
 
 	dirty = true;

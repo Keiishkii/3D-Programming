@@ -8,8 +8,6 @@ VertexBuffer::VertexBuffer()
 	{
 		throw std::exception();
 	}
-
-
 }
 
 GLuint VertexBuffer::getID()

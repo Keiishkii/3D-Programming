@@ -10,9 +10,6 @@ struct Inputs
 	bool key_S = false;
 	bool key_D = false;
 
-	bool key_Q = false;
-	bool key_E = false;
-
 	bool key_SPACE = false;
 	bool key_LSHIFT = false;
 

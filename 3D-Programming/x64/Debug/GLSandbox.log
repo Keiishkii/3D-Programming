@@ -1,13 +1,12 @@
 ﻿  main.cpp
-C:\Users\Charl\Desktop\Git Repositories\3D-Programming\3D-Programming\src\main.cpp(263,27): warning C4305: 'initializing': truncation from 'double' to 'float'
-C:\Users\Charl\Desktop\Git Repositories\3D-Programming\3D-Programming\src\main.cpp(264,27): warning C4305: 'initializing': truncation from 'double' to 'float'
-C:\Users\Charl\Desktop\Git Repositories\3D-Programming\3D-Programming\src\main.cpp(268,66): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
-C:\Users\Charl\Desktop\Git Repositories\3D-Programming\3D-Programming\src\main.cpp(290,98): warning C4244: '+=': conversion from 'double' to 'T', possible loss of data
+C:\Users\Charl\Desktop\Git Repositories\3D-Programming\3D-Programming\src\main.cpp(339,27): warning C4305: 'initializing': truncation from 'double' to 'float'
+C:\Users\Charl\Desktop\Git Repositories\3D-Programming\3D-Programming\src\main.cpp(343,66): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
+C:\Users\Charl\Desktop\Git Repositories\3D-Programming\3D-Programming\src\main.cpp(365,98): warning C4244: '+=': conversion from 'double' to 'T', possible loss of data
           with
           [
               T=float
           ]
-C:\Users\Charl\Desktop\Git Repositories\3D-Programming\3D-Programming\src\main.cpp(292,98): warning C4244: '+=': conversion from 'double' to 'T', possible loss of data
+C:\Users\Charl\Desktop\Git Repositories\3D-Programming\3D-Programming\src\main.cpp(367,98): warning C4244: '+=': conversion from 'double' to 'T', possible loss of data
           with
           [
               T=float

@@ -56,13 +56,6 @@ void InputHandler::processInputs()
 			case SDLK_LSHIFT:
 				inputs.key_LSHIFT = true;
 				break;
-
-			case SDLK_q:
-				inputs.key_Q = true;
-				break;
-			case SDLK_e:
-				inputs.key_E = true;
-				break;
 			}
 			break;
 		case SDL_KEYUP:
@@ -86,14 +79,6 @@ void InputHandler::processInputs()
 				break;
 			case SDLK_LSHIFT:
 				inputs.key_LSHIFT = false;
-				break;
-
-
-			case SDLK_q:
-				inputs.key_Q = false;
-				break;
-			case SDLK_e:
-				inputs.key_E = false;
 				break;
 			}
 			break;

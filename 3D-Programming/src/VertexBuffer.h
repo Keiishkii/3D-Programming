@@ -19,6 +19,7 @@ public:
 	VertexBuffer();
 
 	GLuint getID();
+	std::vector<GLfloat> getData() { return data; };
 
 	void add(const glm::vec2& value);
 	void add(const glm::vec3& value);
